@@ -6,6 +6,7 @@
     using System.Reflection;
 
     using Nancy.Bootstrapper;
+    using Nancy.Configuration;
     using Nancy.Diagnostics;
     using Nancy.TinyIoc;
 
@@ -74,6 +75,11 @@
         protected override TinyIoCContainer GetApplicationContainer()
         {
             return new TinyIoCContainer();
+        }
+
+        protected override void RegisterNancyEnvironment(TinyIoCContainer container, INancyEnvironment environment)
+        {
+            container.Register(environment);
         }
 
         /// <summary>
@@ -180,6 +186,12 @@
         protected override TinyIoCContainer CreateRequestContainer(NancyContext context)
         {
             return this.ApplicationContainer.GetChildContainer();
+        }
+
+        // TODO: ADD XML COMMENT
+        protected override INancyEnvironmentConfigurator GetEnvironmentConfigurator()
+        {
+            return this.ApplicationContainer.Resolve<INancyEnvironmentConfigurator>();
         }
 
         /// <summary>
