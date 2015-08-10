@@ -180,7 +180,7 @@ namespace Nancy.ModelBinding
 
         private bool BindingValueIsValid(string bindingValue, object existingValue, BindingMemberInfo modelProperty, BindingContext bindingContext)
         {
-            return (!String.IsNullOrEmpty(bindingValue) &&
+            return ((!String.IsNullOrEmpty(bindingValue) || (!bindingContext.Configuration.ConvertEmptyStringToNull && bindingValue != null)) &&
                     (IsDefaultValue(existingValue, modelProperty.PropertyType) ||
                      bindingContext.Configuration.Overwrite));
         }
