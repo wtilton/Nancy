@@ -2,8 +2,9 @@ namespace Nancy.Testing.Tests
 {
     using System;
     using System.Linq;
+
     using CsQuery;
-    using Nancy.Testing;
+
     using Xunit;
 
     public class AssertExtensionsTests
@@ -223,7 +224,7 @@ namespace Nancy.Testing.Tests
             var htmlNode = this.query["#testId"].First();
 
             // When
-            var result = Record.Exception(() => htmlNode.ShouldContain("test", StringComparison.InvariantCultureIgnoreCase));
+            var result = Record.Exception(() => htmlNode.ShouldContain("test", StringComparison.OrdinalIgnoreCase));
 
             // Then
             Assert.Null(result);

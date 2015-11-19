@@ -7,11 +7,12 @@ namespace Nancy.Tests.Unit.Routing
     using System.Threading.Tasks;
 
     using FakeItEasy;
-    using Fakes;
 
     using Nancy.Helpers;
     using Nancy.Responses.Negotiation;
     using Nancy.Routing;
+    using Nancy.Tests.Fakes;
+
     using Xunit;
 
     public class DefaultRequestDispatcherFixture
@@ -20,12 +21,14 @@ namespace Nancy.Tests.Unit.Routing
         private readonly IRouteResolver routeResolver;
         private readonly IRouteInvoker routeInvoker;
         private readonly IList<IResponseProcessor> responseProcessors;
+        private IResponseNegotiator negotiator;
 
         public DefaultRequestDispatcherFixture()
         {
             this.responseProcessors = new List<IResponseProcessor>();
             this.routeResolver = A.Fake<IRouteResolver>();
             this.routeInvoker = A.Fake<IRouteInvoker>();
+            this.negotiator = A.Fake<IResponseNegotiator>();
 
             A.CallTo(() => this.routeInvoker.Invoke(A<Route>._, A<CancellationToken>._, A<DynamicDictionary>._, A<NancyContext>._)).ReturnsLazily(arg =>
                 {
@@ -46,7 +49,7 @@ namespace Nancy.Tests.Unit.Routing
                 });
 
             this.requestDispatcher =
-                new DefaultRequestDispatcher(this.routeResolver, this.responseProcessors, this.routeInvoker);
+                new DefaultRequestDispatcher(this.routeResolver, this.responseProcessors, this.routeInvoker, this.negotiator);
 
             var resolvedRoute = new ResolveResult
             {
@@ -685,7 +688,7 @@ namespace Nancy.Tests.Unit.Routing
             // When
             this.requestDispatcher.Dispatch(context, new CancellationToken());
 
-            // Then            
+            // Then
             A.CallTo(() => this.routeResolver.Resolve(A<NancyContext>._)).MustHaveHappened(Repeated.Exactly.Twice);
         }
 

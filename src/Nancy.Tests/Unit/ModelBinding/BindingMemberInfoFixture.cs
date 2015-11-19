@@ -1,10 +1,11 @@
 ﻿namespace Nancy.Tests.Unit.ModelBinding
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml.Serialization;
+
     using Nancy.ModelBinding;
+
     using Xunit;
     using Xunit.Sdk;
 
@@ -237,7 +238,10 @@
                 set { }
             }
 
+#pragma warning disable 169
+            // ReSharper disable once InconsistentNaming
             private int UnbindablePrivateField;
+#pragma warning restore 169
 
             public static int UnbindableStaticField;
 

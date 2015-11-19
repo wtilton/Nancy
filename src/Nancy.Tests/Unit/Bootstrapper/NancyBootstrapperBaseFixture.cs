@@ -1,15 +1,18 @@
-﻿using Nancy.Diagnostics;
-
-namespace Nancy.Tests.Unit.Bootstrapper
+﻿namespace Nancy.Tests.Unit.Bootstrapper
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading;
+
     using FakeItEasy;
+
     using Nancy.Bootstrapper;
+    using Nancy.Configuration;
+    using Nancy.Diagnostics;
     using Nancy.Tests.Fakes;
+
     using Xunit;
 
     public class NancyBootstrapperBaseFixture
@@ -70,8 +73,8 @@ namespace Nancy.Tests.Unit.Bootstrapper
 
             // Then
             this.bootstrapper.PassedModules.ShouldNotBeNull();
-            this.bootstrapper.PassedModules.Where(mr => mr.ModuleType == typeof(Fakes.FakeNancyModuleWithBasePath)).FirstOrDefault().ShouldNotBeNull();
-            this.bootstrapper.PassedModules.Where(mr => mr.ModuleType == typeof(Fakes.FakeNancyModuleWithoutBasePath)).FirstOrDefault().ShouldNotBeNull();
+            this.bootstrapper.PassedModules.Where(mr => mr.ModuleType == typeof(FakeNancyModuleWithBasePath)).FirstOrDefault().ShouldNotBeNull();
+            this.bootstrapper.PassedModules.Where(mr => mr.ModuleType == typeof(FakeNancyModuleWithoutBasePath)).FirstOrDefault().ShouldNotBeNull();
         }
 
         [Fact]
@@ -123,7 +126,7 @@ namespace Nancy.Tests.Unit.Bootstrapper
             // Given
             var startup = A.Fake<IApplicationStartup>();
             this.bootstrapper.OverriddenApplicationStartupTasks = new[] { startup };
-            
+
             var registrations = A.Fake<IRegistrations>();
             this.bootstrapper.OverriddenRegistrationTasks = new[] { registrations };
 
@@ -336,6 +339,11 @@ namespace Nancy.Tests.Unit.Bootstrapper
             return this.FakeNancyEngine;
         }
 
+        protected override INancyEnvironmentConfigurator GetEnvironmentConfigurator()
+        {
+            return new FakeEnvironmentConfigurator();
+        }
+
         /// <summary>
         /// Gets the diagnostics for initialisation
         /// </summary>
@@ -388,6 +396,11 @@ namespace Nancy.Tests.Unit.Bootstrapper
                     .FirstOrDefault();
         }
 
+        public override INancyEnvironment GetEnvironment()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void ConfigureApplicationContainer(FakeContainer existingContainer)
         {
             this.AppContainer = existingContainer;
@@ -396,6 +409,10 @@ namespace Nancy.Tests.Unit.Bootstrapper
         protected override FakeContainer GetApplicationContainer()
         {
             return FakeContainer;
+        }
+
+        protected override void RegisterNancyEnvironment(FakeContainer container, INancyEnvironment environment)
+        {
         }
 
         /// <summary>
@@ -463,6 +480,14 @@ namespace Nancy.Tests.Unit.Bootstrapper
         public bool Disposed { get; private set; }
     }
 
+    internal class FakeEnvironmentConfigurator : INancyEnvironmentConfigurator
+    {
+        public INancyEnvironment ConfigureEnvironment(Action<INancyEnvironment> configuration)
+        {
+            return new DefaultNancyEnvironment();
+        }
+    }
+
     internal class FakeBootstrapperBaseGetModulesOverride : NancyBootstrapperBase<object>
     {
         public IEnumerable<ModuleRegistration> RegisterModulesRegistrationTypes { get; set; }
@@ -479,6 +504,11 @@ namespace Nancy.Tests.Unit.Bootstrapper
         public FakeBootstrapperBaseGetModulesOverride()
         {
             ModuleRegistrations = new List<ModuleRegistration>() { new ModuleRegistration(this.GetType()) };
+        }
+
+        protected override INancyEnvironmentConfigurator GetEnvironmentConfigurator()
+        {
+            return new FakeEnvironmentConfigurator();
         }
 
         /// <summary>
@@ -534,6 +564,11 @@ namespace Nancy.Tests.Unit.Bootstrapper
             throw new NotImplementedException();
         }
 
+        public override INancyEnvironment GetEnvironment()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override INancyEngine GetEngineInternal()
         {
             return A.Fake<INancyEngine>();
@@ -542,6 +577,10 @@ namespace Nancy.Tests.Unit.Bootstrapper
         protected override object GetApplicationContainer()
         {
             return new object();
+        }
+
+        protected override void RegisterNancyEnvironment(object container, INancyEnvironment environment)
+        {
         }
 
         /// <summary>

@@ -2,12 +2,14 @@ namespace Nancy.Hosting.Aspnet
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web;
-    using IO;
+
     using Nancy.Extensions;
+    using Nancy.IO;
 
     /// <summary>
     /// Bridges the communication between Nancy and ASP.NET based hosting.
@@ -61,7 +63,7 @@ namespace Nancy.Hosting.Aspnet
             var nancyContext = task.Result.Item1;
             var httpContext = task.Result.Item2;
 
-            NancyHandler.SetNancyResponseToHttpResponse(httpContext, nancyContext.Response);
+            SetNancyResponseToHttpResponse(httpContext, nancyContext.Response);
             nancyContext.Dispose();
         }
 
@@ -99,7 +101,7 @@ namespace Nancy.Hosting.Aspnet
 
             if (expectedRequestLength != 0)
             {
-                body = RequestStream.FromStream(context.Request.InputStream, expectedRequestLength, true);
+                body = RequestStream.FromStream(context.Request.InputStream, expectedRequestLength, StaticConfiguration.DisableRequestStreamSwitching ?? true);
             }
 
             var protocolVersion = context.Request.ServerVariables["HTTP_VERSION"];
@@ -151,6 +153,11 @@ namespace Nancy.Hosting.Aspnet
                 context.Response.ContentType = response.ContentType;
             }
 
+            if (IsOutputBufferDisabled())
+            {
+                context.Response.BufferOutput = false;
+            }
+
             context.Response.StatusCode = (int) response.StatusCode;
 
             if (response.ReasonPhrase != null)
@@ -158,7 +165,20 @@ namespace Nancy.Hosting.Aspnet
                 context.Response.StatusDescription = response.ReasonPhrase;
             }
 
-            response.Contents.Invoke(context.Response.OutputStream);
+            response.Contents.Invoke(new NancyResponseStream(context.Response));
+        }
+
+        private static bool IsOutputBufferDisabled()
+        {
+            var configurationSection =
+                ConfigurationManager.GetSection("nancyFx") as NancyFxSection;
+
+            if (configurationSection == null || configurationSection.DisableOutputBuffer == null)
+            {
+                return false;
+            }
+
+            return configurationSection.DisableOutputBuffer.Value;
         }
 
         private static void SetHttpResponseHeaders(HttpContextBase context, Response response)

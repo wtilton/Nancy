@@ -2,7 +2,8 @@
 {
     using System;
     using System.IO;
-    using Json;
+
+    using Nancy.Json;
 
     public class JsonResponse<TModel> : Response
     {
@@ -25,12 +26,7 @@
 
         private static string Encoding
         {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(JsonSettings.DefaultCharset)
-                    ? string.Concat("; charset=", JsonSettings.DefaultCharset)
-                    : string.Empty;
-            }
+            get { return string.Concat("; charset=", JsonSettings.DefaultEncoding.WebName); }
         }
 
         private static Action<Stream> GetJsonContents(TModel model, ISerializer serializer)

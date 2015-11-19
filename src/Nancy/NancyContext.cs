@@ -3,13 +3,14 @@ namespace Nancy
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Security.Claims;
+
     using Nancy.Diagnostics;
     using Nancy.Responses.Negotiation;
     using Nancy.Routing;
-    using Nancy.Security;
     using Nancy.Validation;
-    using System.Globalization;
 
     /// <summary>
     /// Nancy context.
@@ -74,7 +75,7 @@ namespace Nancy
         /// <summary>
         /// Gets or sets the current user
         /// </summary>
-        public IUserIdentity CurrentUser { get; set; }
+        public ClaimsPrincipal CurrentUser { get; set; }
 
         /// <summary>
         /// Diagnostic request tracing

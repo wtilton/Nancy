@@ -1,8 +1,11 @@
 ﻿namespace Nancy.Testing.Tests
 {
     using System.Linq;
-    using Xunit;
+    using FakeItEasy;
+    using Nancy.Configuration;
     using Nancy.Tests;
+
+    using Xunit;
 
     public class BrowserContextExtensionsFixture
     {
@@ -10,7 +13,7 @@
         public void Should_remove_default_accept_header_when_accept_is_invoked_without_quality_parameter()
         {
             // Given
-            var context = new BrowserContext();
+            var context = new BrowserContext(A.Fake<INancyEnvironment>());
 
             // When
             context.Accept("application/json");
@@ -23,7 +26,7 @@
         public void Should_remove_default_accept_header_once_when_accept_is_invoked_without_quality_parameter()
         {
             // Given
-            var context = new BrowserContext();
+            var context = new BrowserContext(A.Fake<INancyEnvironment>());
 
             // When
             context.Accept("application/json");
@@ -38,7 +41,7 @@
         public void Should_remove_default_accept_header_when_accept_is_invoked_with_quality_parameter()
         {
             // Given
-            var context = new BrowserContext();
+            var context = new BrowserContext(A.Fake<INancyEnvironment>());
 
             // When
             context.Accept("application/json", 0.8m);
@@ -51,7 +54,7 @@
         public void Should_remove_default_accept_header_once_when_accept_is_invoked_with_quality_parameter()
         {
             // Given
-            var context = new BrowserContext();
+            var context = new BrowserContext(A.Fake<INancyEnvironment>());
 
             // When
             context.Accept("application/json", 0.8m);
@@ -66,7 +69,7 @@
         public void Should_add_mediarange_as_accept_header_with_default_quality_when_accept_is_invoked_without_quality_parameter()
         {
             // Given
-            var context = new BrowserContext();
+            var context = new BrowserContext(A.Fake<INancyEnvironment>());
 
             // When
             context.Accept("application/json");
@@ -79,7 +82,7 @@
         public void Should_add_mediarange_with_supplied_quality_as_accept_header_with_default_quality_when_accept_is_invoked_with_quality_parameter()
         {
             // Given
-            var context = new BrowserContext();
+            var context = new BrowserContext(A.Fake<INancyEnvironment>());
 
             // When
             context.Accept("application/json", 0.8m);

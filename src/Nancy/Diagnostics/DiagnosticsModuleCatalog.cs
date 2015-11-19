@@ -3,10 +3,11 @@ namespace Nancy.Diagnostics
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ModelBinding;
+
     using Nancy.Bootstrapper;
+    using Nancy.ModelBinding;
+    using Nancy.Responses;
     using Nancy.TinyIoc;
-    using Responses;
 
     internal class DiagnosticsModuleCatalog : INancyModuleCatalog
     {
@@ -51,11 +52,15 @@ namespace Nancy.Diagnostics
             diagContainer.Register<IFieldNameConverter, DefaultFieldNameConverter>();
             diagContainer.Register<BindingDefaults, BindingDefaults>();
             diagContainer.Register<ISerializer>(new DefaultJsonSerializer { RetainCasing = false });
-            diagContainer.Register<DiagnosticsConfiguration>(diagnosticsConfiguration);
 
             foreach (var diagnosticsProvider in providers)
             {
-                diagContainer.Register<IDiagnosticsProvider>(diagnosticsProvider, diagnosticsProvider.GetType().FullName);
+                var key = string.Concat(
+                    diagnosticsProvider.GetType().FullName,
+                    "_",
+                    diagnosticsProvider.DiagnosticObject.GetType().FullName);
+                
+                diagContainer.Register<IDiagnosticsProvider>(diagnosticsProvider, key);
             }
 
             foreach (var moduleType in AppDomainAssemblyTypeScanner.TypesOf<DiagnosticModule>().ToArray())

@@ -3,18 +3,21 @@ namespace Nancy
     using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using System.Security.Cryptography.X509Certificates;
+    using System.Text.RegularExpressions;
 
-    using IO;
     using Nancy.Extensions;
+    using Nancy.Helpers;
+    using Nancy.IO;
     using Session;
 
     /// <summary>
     /// Encapsulates HTTP-request information to an Nancy application.
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay, nq}")]
     public class Request : IDisposable
     {
         private readonly List<HttpFile> files = new List<HttpFile>();
@@ -190,7 +193,7 @@ namespace Nancy
                 }
                 else
                 {
-                    cookieValue = parts[1];
+                    cookieValue = HttpUtility.UrlDecode(parts[1]);
                 }
 
                 cookieDictionary[cookieName] = cookieValue;
@@ -255,7 +258,7 @@ namespace Nancy
             var multipart = new HttpMultipart(this.Body, boundary);
 
             var formValues =
-                new NameValueCollection(StaticConfiguration.CaseSensitive ? StringComparer.InvariantCulture : StringComparer.InvariantCultureIgnoreCase);
+                new NameValueCollection(StaticConfiguration.CaseSensitive ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
 
             foreach (var httpMultipartBoundary in multipart.GetBoundaries())
             {
@@ -315,6 +318,11 @@ namespace Nancy
             }
 
             this.Method = providedOverride.Single().Item2;
+        }
+
+        private string DebuggerDisplay
+        {
+            get { return string.Format("{0} {1} {2}", this.Method, this.Url, this.ProtocolVersion).Trim(); }
         }
     }
 }

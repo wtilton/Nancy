@@ -1,6 +1,5 @@
 ﻿namespace Nancy.ViewEngines.Razor.VisualBasic
 {
-    using System;
     using System.Globalization;
     using System.Linq;
     using System.Web.Razor.Generator;
@@ -18,6 +17,7 @@
 
         private bool modelStatementFound;
         private SourceLocation? endInheritsLocation;
+        private VisualBasicClrTypeResolver clrTypeResolver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NancyVisualBasicRazorCodeParser"/> class.
@@ -25,6 +25,8 @@
         public NancyVisualBasicRazorCodeParser()
         {
             MapDirective(ModelTypeKeyword, ModelTypeDirective);
+
+            this.clrTypeResolver = new VisualBasicClrTypeResolver();
         }
 
         protected virtual bool ModelTypeDirective()
@@ -63,7 +65,15 @@
             }
 
             var baseType = string.Concat(Span.Symbols.Select(s => s.Content)).Trim();
-            this.Span.CodeGenerator = new VisualBasicModelCodeGenerator(baseType);
+
+            var modelType = this.clrTypeResolver.Resolve(this.Language.TokenizeString(baseType).ToList());           
+
+            if (modelType == null)
+            {
+                CodeParserHelper.ThrowTypeNotFound(baseType);
+            }
+
+            this.Span.CodeGenerator = new ModelCodeGenerator(modelType, modelType.FullName);
 
             this.CheckForInheritsAndModelStatements();
             

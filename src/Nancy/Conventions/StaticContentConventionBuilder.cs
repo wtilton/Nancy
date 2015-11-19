@@ -1,3 +1,5 @@
+using Nancy.Diagnostics;
+
 namespace Nancy.Conventions
 {
     using System;
@@ -5,8 +7,9 @@ namespace Nancy.Conventions
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Helpers;
-    using Responses;
+
+    using Nancy.Helpers;
+    using Nancy.Responses;
 
     /// <summary>
     /// Helper class for defining directory-based conventions for static contents.
@@ -52,7 +55,7 @@ namespace Nancy.Conventions
 
                 if (!pathWithoutFilename.StartsWith(requestedPath, StringComparison.OrdinalIgnoreCase))
                 {
-                    ctx.Trace.TraceLog.WriteLog(x => x.AppendLine(string.Concat("[StaticContentConventionBuilder] The requested resource '", path, "' does not match convention mapped to '", requestedPath, "'" )));
+                    (ctx.Trace.TraceLog ?? new NullLog()).WriteLog(x => x.AppendLine(string.Concat("[StaticContentConventionBuilder] The requested resource '", path, "' does not match convention mapped to '", requestedPath, "'" )));
                     return null;
                 }
 

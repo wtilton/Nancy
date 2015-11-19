@@ -28,15 +28,16 @@ namespace Nancy
         public static NancyContext HandleRequest(this INancyEngine nancyEngine, Request request, Func<NancyContext, NancyContext> preRequest)
         {
             var task = nancyEngine.HandleRequest(request, preRequest, CancellationToken.None);
+
             try
             {
                 task.Wait();
             }
             catch (Exception ex)
             {
-                var flattenedException = NancyEngine.FlattenException(ex);
-                throw flattenedException;
+                throw ex.FlattenInnerExceptions();
             }
+
             return task.Result;
         }
 
@@ -65,8 +66,6 @@ namespace Nancy
             nancyEngine
                 .HandleRequest(request, preRequest, cancellationToken)
                 .WhenCompleted(t => onComplete(t.Result), t => onError(t.Exception));
-
-            //this.HandleRequest(request, null, onComplete, onError);
         }
 
         /// <summary>

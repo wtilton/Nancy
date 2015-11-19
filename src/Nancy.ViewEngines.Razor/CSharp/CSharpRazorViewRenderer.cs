@@ -5,7 +5,9 @@
     using System.Collections.Generic;
     using System.Web.Razor;
     using System.Web.Razor.Generator;
+
     using Microsoft.CSharp;
+    using Microsoft.CSharp.RuntimeBinder;
 
     using Nancy.Extensions;
 
@@ -49,10 +51,10 @@
         {
             this.Assemblies = new List<string>
             {
-                typeof(Microsoft.CSharp.RuntimeBinder.Binder).GetAssemblyPath()
+                typeof(Binder).GetAssemblyPath()
             };
 
-            this.ModelCodeGenerator = typeof(CSharpModelCodeGenerator);
+            this.ModelCodeGenerator = typeof(ModelCodeGenerator);
 
             this.Provider = new CSharpCodeProvider();
 

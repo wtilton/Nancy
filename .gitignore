@@ -16,7 +16,7 @@ build/
 [Dd]ebug/
 [Oo]bj/
 [Rr]elease/
-_[Rr]e[Ss]harper.*/
+_[Rr]e[Ss]harper*/
 *.docstates
 *.tss
 *.ncrunchproject
@@ -26,4 +26,5 @@ src/_NCrunch_Nancy/
 Thumbs.db
 .idea
 *.GhostDoc.xml
-
+Gemfile.lock
+.vs/

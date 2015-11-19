@@ -1,7 +1,9 @@
 namespace Nancy.Demo.Authentication.Forms.TestingDemo
 {
     using System;
-    using Testing;
+
+    using Nancy.Testing;
+
     using Xunit;
 
     public class LoginFixture
@@ -41,7 +43,7 @@ namespace Nancy.Demo.Authentication.Forms.TestingDemo
             response.Body["#errorBox"]
                 .ShouldExistOnce()
                 .And.ShouldBeOfClass("floatingError")
-                .And.ShouldContain("invalid", StringComparison.InvariantCultureIgnoreCase);
+                .And.ShouldContain("invalid", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

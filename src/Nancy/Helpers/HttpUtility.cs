@@ -29,15 +29,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Text;
-
 namespace Nancy.Helpers
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.IO;
+    using System.Text;
+
     public sealed class HttpUtility
     {
         sealed class HttpQSCollection : NameValueCollection
@@ -48,7 +48,7 @@ namespace Nancy.Helpers
             }
 
             public HttpQSCollection(bool caseSensitive)
-                : base(caseSensitive ? StringComparer.InvariantCulture : StringComparer.InvariantCultureIgnoreCase)
+                : base(caseSensitive ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase)
             {
             }
 

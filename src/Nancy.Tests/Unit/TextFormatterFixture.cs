@@ -2,7 +2,9 @@
 {
     using System.IO;
     using System.Text;
+
     using FakeItEasy;
+
     using Xunit;
 
     public class TextFormatterFixture
@@ -19,7 +21,7 @@
         [Fact]
         public void Should_return_a_response_with_content_type_text_plain()
         {
-            response.ContentType.ShouldEqual("text/plain");
+            response.ContentType.ShouldEqual("text/plain; charset=utf-8");
         }
 
         [Fact]
@@ -46,7 +48,7 @@
             using (var stream = new MemoryStream())
             {
                 response.Contents(stream);
-                response.ContentType.ShouldEqual("text/cache-manifest");
+                response.ContentType.ShouldEqual("text/cache-manifest; charset=utf-8");
             }
         }
     }

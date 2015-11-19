@@ -1,21 +1,21 @@
 ﻿namespace Nancy.Diagnostics
 {
     using System.Collections.Generic;
-    using ModelBinding;
+
     using Nancy.Bootstrapper;
+    using Nancy.Configuration;
+    using Nancy.Culture;
     using Nancy.Localization;
+    using Nancy.ModelBinding;
+    using Nancy.Responses.Negotiation;
     using Nancy.Routing;
     using Nancy.Routing.Constraints;
-
-    using Responses.Negotiation;
-    using Nancy.Culture;
 
     /// <summary>
     /// Wires up the diagnostics support at application startup.
     /// </summary>
     public class DefaultDiagnostics : IDiagnostics
     {
-        private readonly DiagnosticsConfiguration diagnosticsConfiguration;
         private readonly IEnumerable<IDiagnosticsProvider> diagnosticProviders;
         private readonly IRootPathProvider rootPathProvider;
         private readonly IRequestTracing requestTracing;
@@ -27,11 +27,11 @@
         private readonly IRequestTraceFactory requestTraceFactory;
         private readonly IEnumerable<IRouteMetadataProvider> routeMetadataProviders;
         private readonly ITextResource textResource;
+        private readonly INancyEnvironment environment;
 
         /// <summary>
         /// Creates a new instance of the <see cref="DefaultDiagnostics"/> class.
         /// </summary>
-        /// <param name="diagnosticsConfiguration"></param>
         /// <param name="diagnosticProviders"></param>
         /// <param name="rootPathProvider"></param>
         /// <param name="requestTracing"></param>
@@ -44,7 +44,6 @@
         /// <param name="routeMetadataProviders"></param>
         /// <param name="textResource"></param>
         public DefaultDiagnostics(
-            DiagnosticsConfiguration diagnosticsConfiguration,
             IEnumerable<IDiagnosticsProvider> diagnosticProviders,
             IRootPathProvider rootPathProvider,
             IRequestTracing requestTracing,
@@ -55,9 +54,9 @@
             ICultureService cultureService,
             IRequestTraceFactory requestTraceFactory,
             IEnumerable<IRouteMetadataProvider> routeMetadataProviders,
-            ITextResource textResource)
+            ITextResource textResource,
+            INancyEnvironment environment)
         {
-            this.diagnosticsConfiguration = diagnosticsConfiguration;
             this.diagnosticProviders = diagnosticProviders;
             this.rootPathProvider = rootPathProvider;
             this.requestTracing = requestTracing;
@@ -69,15 +68,16 @@
             this.requestTraceFactory = requestTraceFactory;
             this.routeMetadataProviders = routeMetadataProviders;
             this.textResource = textResource;
+            this.environment = environment;
         }
 
         /// <summary>
-        /// Initialise diagnostics
+        /// Initialize diagnostics
         /// </summary>
         /// <param name="pipelines">Application pipelines</param>
         public void Initialize(IPipelines pipelines)
         {
-            DiagnosticsHook.Enable(this.diagnosticsConfiguration,
+            DiagnosticsHook.Enable(
                 pipelines,
                 this.diagnosticProviders,
                 this.rootPathProvider,
@@ -89,7 +89,8 @@
                 this.cultureService,
                 this.requestTraceFactory,
                 this.routeMetadataProviders,
-                this.textResource);
+                this.textResource,
+                this.environment);
         }
     }
 }

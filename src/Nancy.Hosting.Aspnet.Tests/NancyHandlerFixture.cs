@@ -5,11 +5,12 @@ namespace Nancy.Hosting.Aspnet.Tests
     using System.IO;
     using System.Threading;
     using System.Web;
-    using Nancy.Cookies;
+
     using FakeItEasy;
 
+    using Nancy.Cookies;
     using Nancy.Helpers;
-    using Nancy.Hosting.Aspnet;
+
     using Xunit;
 
     public class NancyHandlerFixture
@@ -71,7 +72,7 @@ namespace Nancy.Hosting.Aspnet.Tests
             var cookie1 = A.Fake<INancyCookie>();
             var cookie2 = A.Fake<INancyCookie>();
             var r = new Response();
-            r.AddCookie(cookie1).AddCookie(cookie2);
+            r.WithCookie(cookie1).WithCookie(cookie2);
             var nancyContext = new NancyContext { Response = r };
 
             A.CallTo(() => cookie1.ToString()).Returns("the first cookie");

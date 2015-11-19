@@ -1,6 +1,5 @@
 namespace Nancy.Demo.Authentication.Forms
 {
-    using Nancy;
     using Nancy.Demo.Authentication.Forms.Models;
     using Nancy.Security;
 
@@ -11,7 +10,7 @@ namespace Nancy.Demo.Authentication.Forms
             this.RequiresAuthentication();
 
             Get["/"] = x => {
-                var model = new UserModel(this.Context.CurrentUser.UserName);
+                var model = new UserModel(this.Context.CurrentUser.Identity.Name);
                 return View["secure.cshtml", model];
             };
         }

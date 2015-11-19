@@ -8,8 +8,10 @@
     using System.Threading.Tasks;
 
     using FakeItEasy;
+
     using Nancy.Bootstrapper;
     using Nancy.Tests;
+
     using Xunit;
     using Xunit.Sdk;
 
@@ -196,13 +198,17 @@
 
             public Action<NancyContext> PostRequestHook { get; set; }
 
-            public Func<NancyContext, Exception, Response> OnErrorHook { get; set; }
+            public Func<NancyContext, Exception, dynamic> OnErrorHook { get; set; }
 
             public Func<NancyContext, IPipelines> RequestPipelinesFactory { get; set; }
 
             public Task<NancyContext> HandleRequest(Request request, Func<NancyContext, NancyContext> preRequest, CancellationToken cancellationToken)
             {
                 throw new NotImplementedException();
+            }
+
+            public void Dispose()
+            {
             }
         }
 

@@ -2,17 +2,19 @@ namespace Nancy
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Cookies;
-
+    using Nancy.Cookies;
     using Nancy.Helpers;
+    using Nancy.Responses;
 
     /// <summary>
     /// Encapsulates HTTP-response information from an Nancy operation.
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay, nq}")]
     public class Response: IDisposable
     {
         /// <summary>
@@ -88,58 +90,6 @@ namespace Nancy
         }
 
         /// <summary>
-        /// Adds a <see cref="INancyCookie"/> to the response.
-        /// </summary>
-        /// <param name="name">The name of the cookie.</param>
-        /// <param name="value">The value of the cookie.</param>
-        /// <returns>The <see cref="Response"/> instance.</returns>
-        [Obsolete("This method has been replaced with Response.WithCookie and will be removed in a subsequent release.")]
-        public Response AddCookie(string name, string value)
-        {
-            return AddCookie(name, value, null, null, null);
-        }
-
-        /// <summary>
-        /// Adds a <see cref="INancyCookie"/> to the response.
-        /// </summary>
-        /// <param name="name">The name of the cookie.</param>
-        /// <param name="value">The value of the cookie.</param>
-        /// <param name="expires">The expiration date of the cookie. Can be <see langword="null" /> if it should expire at the end of the session.</param>
-        /// <returns>The <see cref="Response"/> instance.</returns>
-        [Obsolete("This method has been replaced with Response.WithCookie and will be removed in a subsequent release.")]
-        public Response AddCookie(string name, string value, DateTime? expires)
-        {
-            return AddCookie(name, value, expires, null, null);
-        }
-
-        /// <summary>
-        /// Adds a <see cref="INancyCookie"/> to the response.
-        /// </summary>
-        /// <param name="name">The name of the cookie.</param>
-        /// <param name="value">The value of the cookie.</param>
-        /// <param name="expires">The expiration date of the cookie. Can be <see langword="null" /> if it should expire at the end of the session.</param>
-        /// <param name="domain">The domain of the cookie.</param>
-        /// <param name="path">The path of the cookie.</param>
-        /// <returns>The <see cref="Response"/> instance.</returns>
-        [Obsolete("This method has been replaced with Response.WithCookie and will be removed in a subsequent release.")]
-        public Response AddCookie(string name, string value, DateTime? expires, string domain, string path)
-        {
-            return AddCookie(new NancyCookie(name, value){ Expires = expires, Domain = domain, Path = path });
-        }
-
-        /// <summary>
-        /// Adds a <see cref="INancyCookie"/> to the response.
-        /// </summary>
-        /// <param name="nancyCookie">A <see cref="INancyCookie"/> instance.</param>
-        /// <returns></returns>
-        [Obsolete("This method has been replaced with Response.WithCookie and will be removed in a subsequent release.")]
-        public Response AddCookie(INancyCookie nancyCookie)
-        {
-            Cookies.Add(nancyCookie);
-            return this;
-        }
-
-        /// <summary>
         /// Implicitly cast an <see cref="HttpStatusCode"/> value to a <see cref="Response"/> instance, with the <see cref="StatusCode"/>
         /// set to the value of the <see cref="HttpStatusCode"/>.
         /// </summary>
@@ -169,7 +119,7 @@ namespace Nancy
         /// <returns>A <see cref="Response"/> instance.</returns>
         public static implicit operator Response(string contents)
         {
-            return new Response { Contents = GetStringContents(contents) };
+            return new TextResponse(contents);
         }
 
         /// <summary>
@@ -214,6 +164,11 @@ namespace Nancy
         /// <remarks>This method can be overridden in sub-classes to dispose of response specific resources.</remarks>
         public virtual void Dispose()
         {
+        }
+
+        private string DebuggerDisplay
+        {
+            get { return string.Join(" ", new string[] { this.StatusCode.ToString(), this.ReasonPhrase, this.ContentType }.Where(x => !string.IsNullOrEmpty(x)).ToArray()); }
         }
     }
 }

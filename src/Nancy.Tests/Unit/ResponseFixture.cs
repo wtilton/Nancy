@@ -2,9 +2,9 @@
 {
     using System;
 
-    using Nancy;
-	using Nancy.Cookies;
+    using Nancy.Cookies;
     using Nancy.Tests.Extensions;
+
     using Xunit;
 
     public class ResponseFixture
@@ -15,7 +15,7 @@
             // Given
             var response = new Response();
 
-            // When 
+            // When
             var content = response.GetStringContentsFromResponse();
 
             // Then
@@ -57,7 +57,7 @@
         {
             // Given, When
             Response response = 200;
-            
+
             // Then
             response.StatusCode.ShouldEqual(HttpStatusCode.OK);
         }
@@ -144,17 +144,17 @@
         }
 
         [Fact]
-        public void Should_set_content_type_to_text_html_when_implicitly_cast_from_string()
+        public void Should_set_content_type_to_text_plain_when_implicitly_cast_from_string()
         {
             // Given, When
             const string value = "test value";
             Response response = value;
 
             // Then
-            response.ContentType.ShouldEqual("text/html");
+            response.ContentType.ShouldEqual("text/plain; charset=utf-8");
         }
 
-        [Fact] 
+        [Fact]
         public void Should_overwrite_content_type_from_headers()
         {
             // Given
@@ -173,10 +173,10 @@
         {
 			// Given
             var response = new Response();
-			
+
 			// When
-            response.AddCookie("itsover", "9000");
-			
+            response.WithCookie("itsover", "9000");
+
 			// Then
             response.Cookies.Count.ShouldEqual(1);
             ValidateCookie(response.Cookies[0], "itsover", "9000", null, null, null);
@@ -188,10 +188,10 @@
 			// Given
             var response = new Response();
             var date = DateTime.Now;
-			
+
 			// When
-            response.AddCookie("itsover", "9000", date);
-			
+            response.WithCookie("itsover", "9000", date);
+
 			// Then
             response.Cookies.Count.ShouldEqual(1);
             ValidateCookie(response.Cookies[0], "itsover", "9000", date, null, null);
@@ -203,15 +203,15 @@
 			// Given
             var response = new Response();
             var date = DateTime.Now;
-			
+
 			// When
-            response.AddCookie("itsover", "9000", date, "life", "/andeverything");
-			
+            response.WithCookie("itsover", "9000", date, "life", "/andeverything");
+
 			// Then
             response.Cookies.Count.ShouldEqual(1);
             ValidateCookie(response.Cookies[0], "itsover", "9000", date, "life", "/andeverything");
         }
-						
+
 		private static void ValidateCookie(INancyCookie cookie, string name, string value, DateTime? expires, string domain, string path)
         {
             cookie.Name.ShouldEqual(name);

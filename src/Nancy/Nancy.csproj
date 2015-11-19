@@ -10,9 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Nancy</RootNamespace>
     <AssemblyName>Nancy</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -39,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\Nancy.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Nancy.XML</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MonoDebug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +71,7 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
     <DocumentationFile>bin\MonoDebug\Nancy.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MonoRelease|AnyCPU'">
     <OutputPath>bin\MonoRelease\</OutputPath>
@@ -86,6 +90,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\MonoRelease\Nancy.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp">
@@ -108,7 +113,6 @@
     </Compile>
     <Compile Include="AsyncNamedPipelineBase.cs" />
     <Compile Include="Bootstrapper\AppDomainAssemblyTypeScanner.cs" />
-    <Compile Include="Bootstrapper\IApplicationRegistrations.cs" />
     <Compile Include="Bootstrapper\IRequestStartup.cs" />
     <Compile Include="Bootstrapper\Registrations.cs" />
     <Compile Include="Bootstrapper\BootstrapperException.cs" />
@@ -124,6 +128,15 @@
     <Compile Include="Bootstrapper\NancyInternalConfiguration.cs" />
     <Compile Include="Bootstrapper\Pipelines.cs" />
     <Compile Include="Bootstrapper\ScanMode.cs" />
+    <Compile Include="Configuration\DefaultNancyEnvironment.cs" />
+    <Compile Include="Configuration\DefaultNancyEnvironmentConfigurator.cs" />
+    <Compile Include="Configuration\DefaultNancyEnvironmentFactory.cs" />
+    <Compile Include="Configuration\INancyDefaultConfigurationProvider.cs" />
+    <Compile Include="Configuration\INancyEnvironmentConfigurator.cs" />
+    <Compile Include="Configuration\INancyEnvironment.cs" />
+    <Compile Include="Configuration\INancyEnvironmentFactory.cs" />
+    <Compile Include="Configuration\INancyEnvironmentExtensions.cs" />
+    <Compile Include="Configuration\NancyDefaultConfigurationProvider.cs" />
     <Compile Include="Conventions\AcceptHeaderCoercionConventions.cs" />
     <Compile Include="Conventions\BuiltInAcceptHeaderCoercions.cs" />
     <Compile Include="Conventions\BuiltInCultureConventions.cs" />
@@ -144,10 +157,14 @@
     <Compile Include="Culture\ICultureService.cs" />
     <Compile Include="DefaultResponseFormatterFactory.cs" />
     <Compile Include="DefaultRootPathProvider.cs" />
+    <Compile Include="DefaultSerializerFactory.cs" />
     <Compile Include="DefaultStaticContentProvider.cs" />
     <Compile Include="Diagnostics\DefaultRequestTraceFactory.cs" />
     <Compile Include="Diagnostics\DefaultTraceLog.cs" />
     <Compile Include="Diagnostics\DiagnosticsConfiguration.cs" />
+    <Compile Include="Diagnostics\DiagnosticsConfigurationExtensions.cs" />
+    <Compile Include="Diagnostics\DefaultDiagnosticsConfigurationProvider.cs" />
+    <Compile Include="Diagnostics\DiagnosticsSerializerFactory.cs" />
     <Compile Include="Diagnostics\DiagnosticsSession.cs" />
     <Compile Include="Diagnostics\ConcurrentLimitedCollection.cs" />
     <Compile Include="Diagnostics\DisabledDiagnostics.cs" />
@@ -173,7 +190,9 @@
     <Compile Include="Diagnostics\DefaultDiagnostics.cs" />
     <Compile Include="Diagnostics\DiagnosticsViewRenderer.cs" />
     <Compile Include="Helpers\CacheHelpers.cs" />
+    <Compile Include="Helpers\ExceptionExtensions.cs" />
     <Compile Include="IncludeInNancyAssemblyScanningAttribute.cs" />
+    <Compile Include="ISerializerFactory.cs" />
     <Compile Include="IStaticContentProvider.cs" />
     <Compile Include="Json\Converters\TupleConverter.cs" />
     <Compile Include="Json\JavaScriptPrimitiveConverter.cs" />
@@ -335,7 +354,6 @@
     <Compile Include="Security\CsrfTokenValidationResult.cs" />
     <Compile Include="ResponseExtensions.cs" />
     <Compile Include="RootPathApplicationStartup.cs" />
-    <Compile Include="Security\IUserIdentity.cs" />
     <Compile Include="StaticConfiguration.cs" />
     <Compile Include="Url.cs" />
     <Compile Include="Validation\CompositeValidator.cs" />
@@ -432,7 +450,7 @@
     <Compile Include="Routing\RoutePatternMatchResult.cs" />
     <Compile Include="Security\ModuleSecurity.cs" />
     <Compile Include="Security\SecurityHooks.cs" />
-    <Compile Include="Security\UserIdentityExtensions.cs" />
+    <Compile Include="Security\ClaimsPrincipalExtensions.cs" />
     <Compile Include="Session\CookieBasedSessions.cs" />
     <Compile Include="Cryptography\RijndaelEncryptionProvider.cs" />
     <Compile Include="DefaultObjectSerializer.cs" />
@@ -487,7 +505,9 @@
     <Compile Include="ViewEngines\ViewNotFoundException.cs" />
     <Compile Include="ViewEngines\ViewRenderException.cs" />
     <Compile Include="ViewRenderer.cs" />
-    <Compile Include="Xml\XmlSettings.cs" />
+    <Compile Include="Xml\XmlConfigurationExtensions.cs" />
+    <Compile Include="Xml\XmlConfiguration.cs" />
+    <Compile Include="Xml\DefaultXmlConfigurationProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Diagnostics\Views\Dashboard.sshtml" />

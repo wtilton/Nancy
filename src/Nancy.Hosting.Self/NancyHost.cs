@@ -4,21 +4,22 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Net;
     using System.Linq;
+    using System.Net;
     using System.Security.Principal;
-    using IO;
+
     using Nancy.Bootstrapper;
     using Nancy.Extensions;
     using Nancy.Helpers;
+    using Nancy.IO;
 
     /// <summary>
     /// Allows to host Nancy server inside any application - console or windows service.
     /// </summary>
     /// <remarks>
     /// NancyHost uses <see cref="System.Net.HttpListener"/> internally. Therefore, it requires full .net 4.0 profile (not client profile)
-    /// to run. <see cref="Start"/> will launch a thread that will listen for requests and then process them. Each request is processed in 
-    /// its own execution thread. NancyHost needs <see cref="SerializableAttribute"/> in order to be used from another appdomain under 
+    /// to run. <see cref="Start"/> will launch a thread that will listen for requests and then process them. Each request is processed in
+    /// its own execution thread. NancyHost needs <see cref="SerializableAttribute"/> in order to be used from another appdomain under
     /// mono. Working with AppDomains is necessary if you want to unload the dependencies that come with NancyHost.
     /// </remarks>
     [Serializable]
@@ -160,7 +161,7 @@
         {
             try
             {
-                // if the listener fails to start, it gets disposed; 
+                // if the listener fails to start, it gets disposed;
                 // so we need a new one, each time.
                 this.listener = new HttpListener();
                 foreach (var prefix in this.GetPrefixes())
@@ -219,11 +220,11 @@
             }
         }
 
-        private IEnumerable<string> GetPrefixes()
+        internal IEnumerable<string> GetPrefixes()
         {
             foreach (var baseUri in this.baseUriList)
             {
-                var prefix = baseUri.ToString();
+                var prefix = new UriBuilder(baseUri).ToString();
 
                 if (this.configuration.RewriteLocalhost && !baseUri.Host.Contains("."))
                 {
@@ -248,7 +249,7 @@
 
             var relativeUrl = baseUri.MakeAppLocalPath(request.Url);
 
-            var nancyUrl = new Url 
+            var nancyUrl = new Url
             {
                 Scheme = request.Url.Scheme,
                 HostName = request.Url.Host,
@@ -279,8 +280,8 @@
             return new Request(
                 request.HttpMethod,
                 nancyUrl,
-                RequestStream.FromStream(request.InputStream, expectedRequestLength, false),
-                request.Headers.ToDictionary(), 
+                RequestStream.FromStream(request.InputStream, expectedRequestLength, StaticConfiguration.DisableRequestStreamSwitching ?? false),
+                request.Headers.ToDictionary(),
                 (request.RemoteEndPoint != null) ? request.RemoteEndPoint.Address.ToString() : null,
                 certificate,
                 protocolVersion);
@@ -357,7 +358,7 @@
                 buffer = memoryStream.ToArray();
             }
 
-            var contentLength = (nancyResponse.Headers.ContainsKey("Content-Length")) ? 
+            var contentLength = (nancyResponse.Headers.ContainsKey("Content-Length")) ?
                 Convert.ToInt64(nancyResponse.Headers["Content-Length"]) :
                 buffer.Length;
 
@@ -397,7 +398,7 @@
             long contentLength;
 
             return !long.TryParse(headerValue, NumberStyles.Any, CultureInfo.InvariantCulture, out contentLength) ?
-                0 : 
+                0 :
                 contentLength;
         }
 

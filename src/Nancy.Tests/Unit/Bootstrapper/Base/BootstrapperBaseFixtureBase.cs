@@ -8,6 +8,7 @@ namespace Nancy.Tests.Unit.Bootstrapper.Base
 
     using Nancy.Bootstrapper;
     using Nancy.Routing;
+
     using Xunit;
 
     /// <summary>
@@ -141,7 +142,7 @@ namespace Nancy.Tests.Unit.Bootstrapper.Base
 
             public Action<NancyContext> PostRequestHook { get; set; }
 
-            public Func<NancyContext, Exception, Response> OnErrorHook { get; set; }
+            public Func<NancyContext, Exception, dynamic> OnErrorHook { get; set; }
 
             public Func<NancyContext, IPipelines> RequestPipelinesFactory { get; set; }
 
@@ -171,6 +172,9 @@ namespace Nancy.Tests.Unit.Bootstrapper.Base
                 this.routeCache = routeCache;
                 this.contextFactory = contextFactory;
             }
+
+            public void Dispose()
+            {}
         }
     }
 

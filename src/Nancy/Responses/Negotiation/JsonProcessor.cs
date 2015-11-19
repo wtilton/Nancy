@@ -30,7 +30,7 @@
         /// </summary>
         public IEnumerable<Tuple<string, MediaRange>> ExtensionMappings
         {
-            get {  return extensionMappings; }
+            get { return extensionMappings; }
         }
 
         /// <summary>
@@ -45,10 +45,10 @@
             if (IsExactJsonContentType(requestedMediaRange))
             {
                 return new ProcessorMatch
-                    {
-                        ModelResult = MatchResult.DontCare,
-                        RequestedContentTypeResult = MatchResult.ExactMatch
-                    };
+                {
+                    ModelResult = MatchResult.DontCare,
+                    RequestedContentTypeResult = MatchResult.ExactMatch
+                };
             }
 
             if (IsWildcardJsonContentType(requestedMediaRange))
@@ -91,7 +91,7 @@
 
         private static bool IsWildcardJsonContentType(MediaRange requestedContentType)
         {
-            if (!requestedContentType.Type.IsWildcard && !string.Equals("application", requestedContentType.Type, StringComparison.InvariantCultureIgnoreCase))
+            if (!requestedContentType.Type.IsWildcard && !string.Equals("application", requestedContentType.Type, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -103,8 +103,8 @@
 
             var subtypeString = requestedContentType.Subtype.ToString();
 
-            return (subtypeString.StartsWith("vnd", StringComparison.InvariantCultureIgnoreCase) &&
-                    subtypeString.EndsWith("+json", StringComparison.InvariantCultureIgnoreCase));
+            return (subtypeString.StartsWith("vnd", StringComparison.OrdinalIgnoreCase) &&
+                    subtypeString.EndsWith("+json", StringComparison.OrdinalIgnoreCase));
         }
     }
 }

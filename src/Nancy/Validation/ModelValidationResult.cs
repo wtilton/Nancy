@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
 
     /// <summary>
     /// Represents the result of a model validation.
     /// </summary>
+    [DebuggerDisplay("IsValid = {IsValid}")]
     public class ModelValidationResult
     {
         /// <summary>
@@ -40,6 +42,19 @@
         /// </summary>
         /// <value>An <see cref="IDictionary{TKey,TValue}"/> instance that contains <see cref="ModelValidationError"/> instances grouped by property name.</value>
         public IDictionary<string, IList<ModelValidationError>> Errors { get; set; }
+
+        /// <summary>
+        /// Gets a clean representation of the errors.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<dynamic> FormattedErrors
+        {
+            get
+            {
+                var result = this.Errors.Select(x => new {Key = x.Key, Errors = x.Value.Select(y => y.ErrorMessage).ToArray()}); 
+                return result;
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating whether the validated instance is valid or not.

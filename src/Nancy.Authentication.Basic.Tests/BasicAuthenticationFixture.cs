@@ -2,14 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Claims;
     using System.Text;
     using System.Threading;
+
     using FakeItEasy;
-    using Nancy.Security;
-    using Nancy.Tests;
-    using Xunit;
+
     using Nancy.Bootstrapper;
+    using Nancy.Tests;
     using Nancy.Tests.Fakes;
+
+    using Xunit;
 
     public class BasicAuthenticationFixture
     {
@@ -269,7 +272,7 @@
             var fakePipelines = new Pipelines();
 
             var validator = A.Fake<IUserValidator>();
-            var fakeUser = A.Fake<IUserIdentity>();
+            var fakeUser = A.Fake<ClaimsPrincipal>();
             A.CallTo(() => validator.Validate("foo", "bar")).Returns(fakeUser);
 
             var cfg = new BasicAuthenticationConfiguration(validator, "realm");

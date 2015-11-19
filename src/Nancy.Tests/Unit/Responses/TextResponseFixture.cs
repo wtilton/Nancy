@@ -2,7 +2,9 @@
 {
     using System.IO;
     using System.Text;
+
     using Nancy.Responses;
+
     using Xunit;
 
     public class TextResponseFixture
@@ -80,15 +82,14 @@
             response.Contents.Invoke(outputStream);
 
             // Then
-            response.ContentType.ShouldEqual("text/plain");
+            response.ContentType.ShouldEqual("text/plain; charset=utf-8");
         }
 
         [Fact]
         public void Should_override_content_type()
         {
             // Given
-            string text =
-                "sample text";
+            const string text = "sample text";
 
             var response =
                 new TextResponse(text, "text/cache-manifest");
@@ -99,7 +100,26 @@
             response.Contents.Invoke(outputStream);
 
             // Then
-            response.ContentType.ShouldEqual("text/cache-manifest");
+            response.ContentType.ShouldEqual("text/cache-manifest; charset=utf-8");
+        }
+
+        [Fact]
+        public void Should_include_webname_for_custom_encoding()
+        {
+            // Given
+            string text =
+                "sample text";
+
+            var response =
+                new TextResponse(text, encoding: Encoding.Unicode);
+
+            var outputStream = new MemoryStream();
+
+            // When
+            response.Contents.Invoke(outputStream);
+
+            // Then
+            response.ContentType.ShouldEqual("text/plain; charset=utf-16");
         }
     }
 }

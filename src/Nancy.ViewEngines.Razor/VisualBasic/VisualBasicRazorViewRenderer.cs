@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Web.Razor;
     using System.Web.Razor.Generator;
+
     using Microsoft.VisualBasic;
 
     /// <summary>
@@ -45,7 +46,7 @@
         /// </summary>
         public VisualBasicRazorViewRenderer()
         {
-            this.ModelCodeGenerator = typeof(VisualBasicModelCodeGenerator);
+            this.ModelCodeGenerator = typeof(ModelCodeGenerator);
 
             this.Assemblies = new List<string>();
 

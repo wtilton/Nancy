@@ -1,9 +1,10 @@
 namespace Nancy.Demo.Authentication.Stateless
 {
-    using Nancy.Security;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
+    using System.Security.Principal;
 
     public class UserDatabase
     {
@@ -16,7 +17,7 @@ namespace Nancy.Demo.Authentication.Stateless
             Users.Add(new Tuple<string, string>("user", "password"));
         }
 
-        public static IUserIdentity GetUserFromApiKey(string apiKey)
+        public static ClaimsPrincipal GetUserFromApiKey(string apiKey)
         {
             var activeKey = ActiveApiKeys.FirstOrDefault(x => x.Item2 == apiKey);
 
@@ -26,7 +27,7 @@ namespace Nancy.Demo.Authentication.Stateless
             }
 
             var userRecord = Users.First(u => u.Item1 == activeKey.Item1);
-            return new DemoUserIdentity {UserName = userRecord.Item1};
+            return new ClaimsPrincipal(new GenericIdentity(userRecord.Item1, "stateless"));
         }
 
         public static string ValidateUser(string username, string password)
